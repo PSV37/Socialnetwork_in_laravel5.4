@@ -321,9 +321,11 @@
                             <a href="#" data-toggle="dropdown" class="toggle-button">
                               <i class="fa fa-pencil"></i>
                             </a>
-                            <ul class="dropdown-menu" role="menu"  v-if="comment.user_id == '{{Auth::user()->id}}'">
-                              <li><a href="#">Edit</a></li>
-                              <li v-if="comment.user_id == '{{Auth::user()->id}}'"><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
+                            <ul class="dropdown-menu" role="menu" >
+                              <span  v-if="comment.user_id == '{{Auth::user()->id}}'">
+                                   <li><a href="#">Edit</a></li>
+                                   <li v-if="comment.user_id == '{{Auth::user()->id}}'"><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
+                              </span>
                             </ul>
                           </div>
                           <a href="" class="comment-author pull-left">  @{{post.user.firstname}}</a><br>
