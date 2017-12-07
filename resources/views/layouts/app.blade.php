@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html class="st-layout ls-top-navbar ls-bottom-footer show-sidebar sidebar-l2" lang="en">
 
 <head>
@@ -16,6 +16,7 @@
 
     <link href="{{ asset('web/css/vendor/all.css') }}" rel="stylesheet">
     <link href="{{ asset('web/css/app/app.css') }}" rel="stylesheet">
+     <link href="{{ asset('js/parsleyjs/parsley.js') }}" rel="stylesheet">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
     <style type="text/css">
     .span_div
@@ -108,6 +109,13 @@
       right: 0px;
       position: absolute;
       cursor: pointer;
+    }
+      .badge_content
+    {
+        background:red;
+        position: relative;
+        top: -15px;
+        left: -10px;
     }
    </style>
 <!-- Vendor CSS Standalone Libraries
@@ -206,23 +214,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="main-nav">
           <ul class="nav navbar-nav">
-         
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li class="dropdown-header">Public User Pages</li>
-                <li class="active"><a href="index.html">Timeline</a></li>
-                <li><a href="{{url('profile')}}">About</a></li>
-                <li><a href="user-public-users.html">Friends</a></li>
-                <li class="dropdown-header">Private User Pages</li>
-                <li><a href="user-private-messages.html">Messages</a></li>
-                <li><a href="user-private-profile.html">Profile</a></li>
-                <li><a href="user-private-timeline.html">Timeline</a></li>
-                <li><a href="user-private-users.html">Friends</a></li>
-              </ul>
-            </li>
-            <li><a href="essen`
-                0tial-buttons.html">UI Components</a></li>
+
             <li class="hidden-sm" data-toggle="tooltip" data-placement="bottom" title="A few Color Examples. Download includes CSS Files for all color examples & the tools to Generate any Color combination. This Color-Switcher is for previewing purposes only.">
               <ul class="skins">
 
@@ -241,28 +233,54 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
               </ul>
             </li>
           </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a>All Friends</a></li>
-            <li><a><i class="fa fa-users" aria-hidden="true" style="color:black"></i></a></li>
+          <ul class="nav navbar-nav navbar-right" >
+               <li><a href="{{url('friendlist')}}" >Friends List</a></li>
+                <li><a href="{{url('requestes')}}" > Friend Request  (
+                          {{App\Friendship::where('status',0)->where('user_requested',Auth::user()->id)->count()}}
+                            )</a></li>
+            
+            <li ><a href="{{url('friends')}}/{{ Auth::user()->slug }}" >All Friends</a></li>
+            <li ><a href="{{url('requestes')}}"><i class="fa fa-users" style="color:black"></i></a></li>
                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle user" data-toggle="dropdown">
-                      <i class="fa fa-globe" aria-hidden="true" style="color:black"></i>
-                  </a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{{url('profile')}}">Profile</a></li>
-                    <li><a href="user-private-messages.html">Messages</a></li> 
-                  </ul>
-              </li>
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >
+                       <i class="fa fa-globe fa-2x" aria-hidden="true" style="color: black;margin-top: 12px;"></i> 
+                        <span class="badge badge_content">
+                            {{ DB::table('notifications')->where('status',1)
+                                                         ->where('user_hero',Auth::user()->id)
+                                                         ->count()
+                                }}
+                        </span>
+                    </a>
+                  <?php 
+                       $notes = DB::table('notifications as n')->leftjoin('users as u','u.id','n.user_logged')
+                                                               ->where('user_hero',Auth::user()->id)
+                                                               //->where('status',1)
+                                                               ->orderBy('n.created_at','desc')
+                                                               ->get();
+                     ?>
 
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle user" data-toggle="dropdown">
-                      <i class="fa fa-envelope" aria-hidden="true" style="color:black"></i>
-                  </a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li><a href="{{url('profile')}}">Profile</a></li>
-                    <li><a href="user-private-messages.html">Messages</a></li> 
+                  <ul class="dropdown-menu">
+                      @foreach($notes as $note)
+                          @if($note->status == 1)
+                              <li style="background-color:darkgrey"> <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">                                                 
+                           @else
+                                <li> 
+                           @endif 
+                                  <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">
+                                    <img src="{{url('../')}}/images/{{$note->image}}"  height="50px" width="50px" class="img-rounded ">
+                                     <b style="color:green; margin-left: 13px;">{{ucwords($note->firstname)}}</b><small><span style="argin-left: 8px;">{{$note->note}}</span></small>
+                                      <small><i class="fa fa-users" aria-hidden="true"  style="color: black;"></i></small>
+                                 </a>
+                                      <hr class="border_line">
+                              </li>
+                            
+                      @endforeach
                   </ul>
               </li>
+                
+                  <li><a href="#" class="dropdown-toggle user" data-toggle="dropdown">
+                      <i class="fa fa-envelope" aria-hidden="true" style="color:black"></i>
+                  </a></li>
 
             <li class="hidden-xs">
               <a href="#sidebar-chat" data-toggle="sidebar-menu" data-effect="st-effect-1">
@@ -270,12 +288,12 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
               </a>
             </li>
             <!-- User -->
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle user" data-toggle="dropdown">
-                <img src="{{url('../')}}/pics/{{Auth::user()->image}}" alt="people" class="img-circle" width="45"/> {{ucwords(Auth::user()->firstname)}} <span class="caret"></span>
+            <li class="dropdown" >
+              <a href="#" class="dropdown-toggle user" data-toggle="dropdown" id="user_section">
+                <img src="{{url('../')}}/images/{{Auth::user()->image}}" alt="people" class="img-circle" width="45"/> {{ucwords(Auth::user()->firstname)}} <span class="caret"></span>
               </a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="{{url('profile')}}">Profile</a></li>
+              <ul class="dropdown-menu" role="menu" id='user_profile'>
+                <li><a href="{{url('profile')}}/{{ Auth::user()->slug }}">Profile</a></li>
                 <li><a href="user-private-messages.html">Messages</a></li>
                 <li>
                     <a href="{{ route('logout') }}"
@@ -300,7 +318,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
       <div data-scrollable>
         <div class="sidebar-block">
           <div class="profile">
-            <img src="{{url('../')}}/pics/{{Auth::user()->image}}" alt="people" title="Upload Profile" class="img-circle user_profile" data-toggle="modal" data-target="#myModal" style="cursor:pointer"/>
+            <img src="{{url('../')}}/images/{{Auth::user()->image}}" alt="people" title="Upload Profile" class="img-circle user_profile" data-toggle="modal" data-target="#myModal" style="cursor:pointer"/>
             <h4>{{ucwords(Auth::user()->firstname)}}</h4>
           </div>
         </div>
@@ -435,36 +453,43 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog  modal-lg">
               <!-- Modal content-->
-              <div class="modal-content">
-                <div class="modal-header user_model">
+              <div class="modal-content" style="height: 90%;">
+                <div class="modal-header user_model" >
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title">Upload Profile Picture</h4>
                 </div>
                 <div class="modal-body ">
-                    <div style="position: relative;display: inline-block;">
+                     <form action="{{url('upload')}}" method="post" enctype="multipart/form-data" data-parsley-validate>
+                        {{ csrf_field() }}
+                        <div style="position: relative;display: inline-block;">
                        <div class="upload_img">
-                         <span class="glyphicon glyphicon-upload span_div" ></span><b>photo upload</b>
-                         <input type="file" @change="onfilechange" style="position:absolute;left: 0;top: 0; opacity: 0" />  
+                         <span class="glyphicon glyphicon-upload span_div" ></span><b>photo upload</b><br><br>
+                         <input type="file" name="image" style="position:absolute;left: 0;top: 0; opacity: 0" data-parsley-required="true"  required> 
+                         <button type="submit" class="btn btn-danger">Upload</button>
                        </div>          
-                    </div> 
+                    </div>
+                     </form> 
                     <hr>
-                     <!--  <div v-if="image">
-                                 <div class="col-md-6">
+                    <div class="row">
+                                  <!-- <div class="col-md-6">
                                      <div class="img_div" style="width: 167%;">
                                        <div class="upload_remove_img">
                                          <div @click="removeImg" class="remove_img col-md-offset-5" style="cursor:pointer">X</div>
                                             <img :src="image" style="width: 44%;"/><br>
                                             <h4 class="text-center" style="margin-left:-370px;"><b>New Uploaded Image</b></h4>
-                                            <button @click="uploadImg" class="btn btn-sm btn-info btn-block" style="margin:20px;margin-top:20px">Upload</button>
+                                            <button class="btn btn-sm btn-info btn-block" style="margin:20px;margin-top:20px">Upload</button>
                                         </div>
                                   </div>
-                                 </div>
+                                 </div> -->  
                                  <div class="col-md-6">
-                                    <img src="{{url('../')}}/pics/{{Auth::user()->image}}" style="width:74%;margin-top: 17px"><br>
+                                    <img src="{{url('../')}}/images/{{Auth::user()->image}}" style="width:74%;margin-top: 17px"><br>
                                        <h4 class="text-center" style="margin-left: -131px;"><b>Old Image</b></h4>
                                  </div>
+                                 <div class="col-md-6">
+                                   
+                                 </div>
                                </div>
-                               <div v-else>
+                                <!--  <div v-else>
                                   <div class="row">
                                      <div class="col-md-6">             
                                      <p><img v-if="user.image" :src="'{{url('../')}}/pics/' + user.image" class="post_upload_img"></p>
@@ -477,9 +502,9 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                                          <h4 class="text-center" style="margin-left: -131px;"><b>Old Image</b></h4>
                                     </div>
                                   </div>
-                                                   </div>  -->          
+                     </div>  -->          
                 </div>
-                <div class="modal-footer" style="background-color: white; height: 55px;">
+                <div class="modal-footer" style="background-color: white; ">
                   <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
                 </div>
               </div>             
@@ -686,7 +711,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
       <div class="st-content">
         <!-- extra div for emulating position:fixed of the menu -->
         <div class="st-content-inner">
-              <nav class="navbar navbar-subnav navbar-static-top margin-bottom-none" role="navigation">
+              <nav class="navbar navbar-subnav navbar-static-top margin-bottom-none" role="navigation" style="min-height: 45px;">
             <div class="container-fluid">
               <!-- Brand and toggle get grouped for better mobile display -->
               <div class="navbar-header">
@@ -695,6 +720,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                   <span class="fa fa-ellipsis-h"></span>
                 </button>
               </div>
+
 
        
 
@@ -721,6 +747,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!-- /st-container -->
 
   <!-- Inline Script for colors and config objects; used by various external scripts; -->
+ 
   <script>
     var colors = {
       "danger-color": "#e74c3c",
@@ -831,7 +858,19 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
      <!--    <script src="{{ asset('web/js/app/app1.js') }}"></script>  -->
 <script src="{{ asset('js/app.js') }}"></script>
  <script src="{{ asset('web/js/app/app1.js') }}"></script> 
- 
+  <script type="text/javascript">
+   $(document).ready(function(){
+     $('#hide_comment').on('click',function(){
+        $('#hide_div').hide();
+       // alert('sdfgd');
+     });
+
+     $('#user_section').on('click',function(){
+       $('#user_profile').toggle();
+     })
+   });
+
+  </script>
 
 
 </body>

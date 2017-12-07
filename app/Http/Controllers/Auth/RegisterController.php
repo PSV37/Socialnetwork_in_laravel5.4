@@ -75,13 +75,17 @@ class RegisterController extends Controller
             $img_path = 'girl_logo.png';
         }
 
+        $coverpic = 'c10.png';
+        
         $user = User::create([
                 'firstname' => $data['fname'],
                 'lastname' => $data['lname'],
                 'gender' => $data['gender'],
                 'email' => $data['email'],
+                'slug' => str_slug($data['name'],'-'),
                 'verifyToken' => Str::random(40),
                 'image' => $img_path,
+                'coverpic' => $coverpic,
                 'password' => bcrypt($data['password']),
         ]);
 

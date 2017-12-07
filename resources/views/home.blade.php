@@ -5,12 +5,12 @@
   <div class="container-fluid">
               <!-- Collect the nav links, forms, and other content for toggling -->
               <div class="collapse navbar-collapse collapsed_nav" id="subnav">
-                <ul class="nav navbar-nav ">
+                <ul class="nav navbar-nav " style="margin-top: -12px;">
                   <li class="active"><a href="index.html"><i class="fa fa-fw icon-ship-wheel"></i> Timeline</a></li>
                   <li><a href="user-public-profile.html"><i class="fa fa-fw icon-user-1"></i> About</a></li>
                   <li><a href="user-public-users.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
                 </ul>
-                <ul class="nav navbar-nav hidden-xs navbar-right ">
+                <ul class="nav navbar-nav hidden-xs navbar-right " style="margin-top: -12px;">
                   <li><a href="#" data-toggle="chat-box">Chat <i class="fa fa-fw fa-comment-o"></i></a></li>
                 </ul>
               </div>
@@ -19,15 +19,67 @@
 
           </nav>         
            <div class="cover overlay cover-image-full height-300-lg">
-            <img src="{{asset('web/images/profile-cover.jpg')}}" alt="cover" />
+            <img src="{{url('../')}}/coverpics/{{Auth::user()->coverpic}}" alt="cover"  style="height: 105%;"/>
             <div class="overlay overlay-full">
               <div class="v-top">
-                  <i class="fa fa-pencil pencil_div" data-toggle="modal" data-target="#myModal"></i>
+                   <i class="fa fa-pencil pencil_div" data-toggle="modal" data-target="#cover_myModal"></i>                
                 <!-- <input type="file" @change="onfilechange" style="position:absolute;left: 0;top: 0; opacity: 0" />  -->
               </div>
             </div>
          </div>
+ 
+    <!-- Upload Cover Picture Model  -->
+         <div class="modal fade" id="cover_myModal" role="dialog">
+              <div class="modal-dialog  modal-lg">
+                <!-- Modal content-->
+                  <div class="modal-content">
+                      <div class="modal-header user_model">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Upload Cover Picture</h4>
+                      </div>
+                      <div class="modal-body ">
+                           <form action="{{url('upload/cover')}}" method="post" enctype="multipart/form-data">
+                              {{ csrf_field() }}
+                              <div style="position: relative;display: inline-block;">
+                                 <div class="upload_img">
+                                   <span class="glyphicon glyphicon-upload span_div" ></span><b> Cover photo upload</b><br><br>
+                                   <input type="file" name="coverpic" style="position:absolute;left: 0;top: 0; opacity: 0" required>  
+                                   <button type="submit" class="btn btn-danger">Upload</button>
+                                 </div>          
+                              </div>
+                           </form> 
+                          <hr>
+                          <div >
+                             <div class="col-md-6">
+                              <img src="{{url('../')}}/coverpics/{{Auth::user()->coverpic}}" alt="cover"   style="width:74%;margin-top: 17px"/>
+                        
+                                   <h4 class="text-center" style="margin-left: -131px;"><b>Old Image</b></h4>
+                             </div>
+                          </div>                                     
+                      </div>
+                      <div class="modal-footer" style="background-color: white; height: 55px;">
+                          <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+                      </div>
+                  </div>             
+              </div>
+        </div>
+        <!--End Profile  Modal -->
+ <!--End  Upload Cover Picture Model  -->
 
+
+
+      <div class="collapse navbar-collapse" id="subnav" >
+                <ul class="nav navbar-nav ">
+                  <li><a href="user-private-timeline.html"><i class="fa fa-fw icon-ship-wheel"></i> My Timeline</a></li>
+                </ul>
+                <ul class="nav navbar-nav  navbar-right ">
+                  <li><a href="login.html"> Logout<i class="fa fa-fw fa-sign-out"></i></a></li>
+                </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+
+            </div>
+          </nav>
 
    <div class="timeline row" data-toggle="isotope">      
               <div class="col-xs-12 col-md-6 col-lg-3 item">
@@ -58,7 +110,7 @@
                 <div class="timeline-block">
                   <div class="panel panel-default share clearfix-xs">
                     <div class="panel-heading panel-heading-gray title" style=" padding: 0px;">
-                     <!--  What&acute;s new -->  <img src="{{url('../')}}/pics/{{Auth::user()->image}}"
+                     <!--  What&acute;s new -->  <img src="{{url('../')}}/images/{{Auth::user()->image}}"
                    style="width:56px; margin:5px; padding:5px" class="img-circle">@{{post}}
                     </div>
                     <div class="panel-body">
@@ -195,8 +247,8 @@
                         <div class="input-group">
 
                           <span class="input-group-btn">
-                   <a href="" class="btn btn-default"><i class="fa fa-photo"></i></a>
-                </span>
+                             <a href="" class="btn btn-default"><i class="fa fa-photo"></i></a>
+                          </span>
 
                           <input type="text" class="form-control" />
 
@@ -270,11 +322,11 @@
                       <div class="media">
                         <div class="media-left">
                           <a href="">
-                         <img :src="'{{url('../')}}/pics/'+post.user.image"  class="media-object" style=" height: 50px; width: 68px;"> 
+                         <img :src="'{{url('../')}}/images/'+post.user.image"  class="media-object" style=" height: 50px; width: 68px;"> 
                           </a>
                         </div>
                         <div class="media-body">
-                         <div  v-if="post.user_id == '{{Auth::user()->id}}'">
+                         <div  v-if="post.user_id == '{{Auth::user()->id}}'" style="cursor: pointer;">
                            <span @click="deletepost(post.id)" class="pull-right">Delete</span>                           
                          </div>
                           <a href="">@{{post.user.firstname}}</a>
@@ -288,15 +340,20 @@
                     <div class="relative height-300" style="height: 373px !important;">
                       <div data-toggle="google-maps" class="maps-google-fs" data-center="40.776928,-73.910330" data-zoom="12" data-style="paper">
                         <span>@{{post.content}}</span><br>
-                         <img v-if="post.postImage" :src="'{{url('../')}}/pics/'+post.postImage" heigth="50px"  alt="" title="" class="img-thumbnail post_img">
+                         <img v-if="post.postImage" :src="'{{url('../')}}/postImages/'+post.postImage" heigth="50px"  alt="" title="" class="img-thumbnail post_img">
                       </div>
                     </div>
                     
                       <div class="view-all-comments">
                          <!-- Likes Section -->
                             <span v-if="post.like.length!=0" @click="LikePost(post.id)" >
+                              <span v-if="post.user_id == '{{Auth::user()->id}}'" >
                                 <b style="cursor:pointer;color:#26a69a"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>Your Like</b>
                                 <b style="color: black"> @{{post.like.length}}</b></b>
+                              </span>
+                              <span v-else style="cursor: pointer;">
+                                 <b class="text-info">Likes </b> <b style="color: black"> @{{post.like.length}}</b></b>
+                              </span>
                             </span>
                             <span v-else  @click="LikePost(post.id)">
                                  <b style="cursor:pointer;color:black"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Like</b>
@@ -305,32 +362,40 @@
                         <a href="#">
                           <i class="fa fa-comments-o"></i> View all
                         </a>
-                        <a  @click="commentSeen=!commentSeen">@{{post.comment.length}} Comments</a>
+                        <a  @click="commentSeen=!commentSeen" class="pull-right" style="cursor: pointer;">@{{post.comment.length}} Comments</a>
                       </div>
                     <ul class="comments" >
                       <li class="media"  v-for="comment in post.comment">
                         <div class="media-left">
                           <a href="">
 
-                              <img v-if="post.user.image" :src="'{{url('../')}}/pics/'+post.user.image"   alt="" title="" style="width: 52px;height: 52px;">
+                              <img v-if="post.user.image" :src="'{{url('../')}}/images/'+post.user.image"   alt="" title="" style="width: 52px;height: 52px;">
                           
                           </a>
                         </div>
                         <div class="media-body">
                           <div class="pull-right dropdown" data-show-hover="li">
-                            <a href="#" data-toggle="dropdown" class="toggle-button">
+                            <span data-toggle="dropdown" class="toggle-button">
                               <i class="fa fa-pencil"></i>
-                            </a>
+                            </span>
+                            <div>
+                                <span style="display:none"><span>Show Comment</span>
+                            </div>
                             <ul class="dropdown-menu" role="menu" >
                               <span  v-if="comment.user_id == '{{Auth::user()->id}}'">
                                    <li><a href="#">Edit</a></li>
-                                   <li v-if="comment.user_id == '{{Auth::user()->id}}'"><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
+                                   <li><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
+                              </span>
+                              <span v-else>
+                                 <li id="hide_comment"><span >Hide/Show</span></li>
                               </span>
                             </ul>
                           </div>
-                          <a href="" class="comment-author pull-left">  @{{post.user.firstname}}</a><br>
+                          <div id="hide_div">
+                          <a href="" class="comment-author pull-left">@{{post.user.firstname}}</a><br>
                           <span>@{{comment.comment}}</span>
                           <div class="comment-date">@{{comment.created_at | myTime }}</div>
+                        </div>
                         </div>
                       </li>
                    

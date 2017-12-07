@@ -78,7 +78,7 @@ class PostController extends Controller
        $filename = str_random() . "." . $ext;
 
        //local folder path
-       $path = public_path() . "/pics/" . $filename;
+       $path = public_path() . "/postImages/" . $filename;
 
        //put in folder 
        if(file_put_contents($path, $decode))

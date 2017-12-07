@@ -15,6 +15,9 @@ class CreateFriendshipsTable extends Migration
     {
         Schema::create('friendships', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('requester');
+            $table->string('user_requested');
+            $table->string('status');
             $table->timestamps();
         });
     }

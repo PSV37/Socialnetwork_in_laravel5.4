@@ -5,6 +5,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta name="description" content="">
   <meta name="author" content="">
   <title>ThemeKit</title>
@@ -13,6 +14,7 @@
     Includes styling for all of the 3rd party libraries used with this module, such as Bootstrap, Font Awesome and others.
     TIP: Using bundles will improve performance by reducing the number of network requests the client needs to make when loading the page. -->
   <link href="{{ asset('web/css/vendor/all.css') }}" rel="stylesheet">
+  <link href="{{ asset('js/parsleyjs/parsley.js') }}" rel="stylesheet">
 
   <!-- Vendor CSS Standalone Libraries
         NOTE: Some of these may have been customized (for example, Bootstrap).
@@ -186,7 +188,8 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!-- App Scripts Bundle
     Includes Custom Application JavaScript used for the current theme/module;
     Do not use it simultaneously with the standalone modules below. -->
-   <script src="{{ asset('web/js/app/app.js') }}"></script>
+   <!--<script src="{{ asset('web/js/app/app.js') }}"></script>-->
+   <script src="{{ asset('js/app.js') }}"></script>
 
   <!-- App Scripts Standalone Modules
     As a convenience, we provide the entire UI framework broke down in separate modules
