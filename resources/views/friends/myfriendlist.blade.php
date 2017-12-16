@@ -1,25 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
- <div class="container-fluid">
-   
-                  <!-- Collect the nav links, forms, and other content for toggling -->
-              <div class="collapse navbar-collapse collapsed_nav" id="subnav">
-                <ul class="nav navbar-nav " style="margin-top: -12px;">
-                  <li class="active"><a href="index.html"><i class="fa fa-fw icon-ship-wheel"></i> Timeline</a></li>
-                  <li><a href="user-public-profile.html"><i class="fa fa-fw icon-user-1"></i> About</a></li>
-                  <li><a href="user-public-users.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
-                </ul>
-                <ul class="nav navbar-nav hidden-xs navbar-right " style="margin-top: -12px;">
-                  <li><a href="#" data-toggle="chat-box">Chat <i class="fa fa-fw fa-comment-o"></i></a></li>
-                </ul>
-              </div>
-              <!-- /.navbar-collapse -->
-            </div>
-
-          </nav>         
+   <div class="container-fluid">              
            <div class="cover overlay cover-image-full height-300-lg">
-            <img src="{{url('../')}}/coverpics/{{Auth::user()->coverpic}}" alt="cover"  style="height: 105%;"/>
+            <img src="{{url('../')}}/coverpics/{{Auth::user()->coverpic}}" alt="cover" class="cover_img"  style="width: 1891px;    height: 123%;"/>
             <div class="overlay overlay-full">
               <div class="v-top">
                    <i class="fa fa-pencil pencil_div" data-toggle="modal" data-target="#cover_myModal"></i>                
@@ -68,14 +52,14 @@
                 <div id="filter">
               <form class="form-inline">
                 <label>Filter:</label>
-                <select name="users-filter" id="users-filter-select" class="selectpicker" class="btn btn-primary" data-width="auto">
+                <select name="users-filter" id="users-filter-select" class="selectpicker btn-primary"  data-width="auto">
                   <option value="all">All</option>
                   <option value="friends">Friends of Friends</option>
                   <option value="name">by Name</option>
                 </select>
                 <div id="users-filter-trigger">
                   <div class="select-friends hidden">
-                    <select name="users-filter-friends" class="selectpicker" data-style="btn-primary" data-live-search="true">
+                    <select name="users-filter-friends" class="selectpicker" class="btn-primary" data-live-search="true">
                       <option value="0">Select Friend</option>
                       <option value="1">Mary D.</option>
                       <option value="2">Michelle S.</option>
@@ -93,7 +77,7 @@
 
             <div class="row" data-toggle="isotope">
               @foreach($friends as $friends)  
-              <div class="col-md-6 col-lg-4 item">
+              <div class="col-md-3 col-lg-4 ">
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <div class="media">

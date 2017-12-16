@@ -31,15 +31,16 @@ class FriendshipController extends Controller
                                               ->where('u.id','!=',Auth::user()->id)
                                               ->get();
        //dispaly all friends profiles
-           $user_pro = DB::table('users as u')->leftjoin('profiles as p','p.user_id','u.id')
+           $user_pro = DB::table('users as u')->leftjoin('profiles as p','p.user_id','u.id')             
                                            ->where('slug',$slug)->get();  
 
         return view('profile.profile',compact('allfriends','friends','user_pro'));
     }
 
-    public function addFriend($id)
-    {
-       Auth::user()->addFriend($id);
+    public function addFriend(Request $request)
+    { 
+       $addFriend_id = $request->addFriend_id;
+       Auth::user()->addFriend($addFriend_id);
     	return back();
     }
 
@@ -52,8 +53,9 @@ class FriendshipController extends Controller
     	   return view('friends.requestes',compact('frndrequests'));                                          
     }
 
-     public function confirmrequest($name , $id)
+     public function confirmrequest(Request $request)
     {
+      $id = $request->confirm_id;
     	$uid = Auth::user()->id;
     	$acceptrequest = DB::table('friendships')
   			    	            ->where('requester',$id)
@@ -72,16 +74,17 @@ class FriendshipController extends Controller
                   $notification->note ='Accepted Your Friend Request';
                   $notification->status = '1';
                   $notification->save();
-
+          
 					if($success)
 					{
-						session()->flash('success',Auth::user()->name . '  You Are Now Friend With  '. $name);
-						return back();
+						/*session()->flash('success',Auth::user()->name . '  You Are Now Friend With  '. $name);
+						return back();*/
+           return response()->json(array($success , $id));
 					}						  	         			  	         
 			   }  	            
 			   else
 			   {
-			      session()->flash('msg','Worng User');;
+			      return response()->json($success);
 			   }       
     }
     
@@ -103,5 +106,34 @@ class FriendshipController extends Controller
       // dd($friend2);
         $friends = array_merge($friend1->toArray(),$friend2->toArray());
         return view('friends.myfriendlist',compact('friends'));
+    }
+
+    public function removerequest(Request $request)
+    {
+       $remove_id = $request->remove_id;
+       $uid = Auth::user()->id;
+       $removerequest = DB::table('friendships')
+                          ->where('requester',$remove_id)
+                          ->where('user_requested',$uid)
+                          ->delete();
+               //Notificaion for the requester 
+                  $notification = new Notification;
+                  $notification->user_hero = $remove_id;
+                  $notification->user_logged = Auth::user()->id;
+                  $notification->note ='Cancled Your Friend Request';
+                  $notification->status = '0';
+                  $notification->save();
+          
+          if($removerequest)
+          {
+            /*session()->flash('success',Auth::user()->name . '  You Are Now Friend With  '. $name);
+            return back();*/
+           return response()->json(array($removerequest , $remove_id));
+          }                                                         
+         else
+         {
+            return response()->json($removerequest);
+         } 
+
     }
 }

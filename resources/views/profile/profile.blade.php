@@ -2,19 +2,7 @@
 
 @section('content')
 
-              <!-- Collect the nav links, forms, and other content for toggling -->
-              <div class="collapse navbar-collapse" id="subnav" >
-                <ul class="nav navbar-nav " style="margin-top: -12px;">
-                  <li><a href="user-private-timeline.html"><i class="fa fa-fw icon-ship-wheel"></i> My Timeline</a></li>
-                </ul>
-                <ul class="nav navbar-nav  navbar-right ">
-                  
-                </ul>
-              </div>
-              <!-- /.navbar-collapse -->
-
-            </div>
-          </nav>
+         
 
           <div class="container-fluid" >
           <!--   <div class="tabbable">
@@ -37,7 +25,10 @@
               <div class="col-md-6">
                 <div class="panel panel-default">
                   <div class="panel-heading panel-heading-gray">
+                    @if(Auth::user()->id == Auth::user()->id)
                     <a class="btn btn-white btn-xs pull-right" data-toggle="modal" data-target="#edit_user_myModal"><i class="fa fa-pencil"></i></a>
+                   @endif 
+                   {{$user_pro[0]->id}}
                     <i class="fa fa-fw fa-info-circle"></i> About
                   </div>
                   <div class="panel-body">
@@ -94,7 +85,7 @@
                 </div>
                 <div class="modal-body ">
                   <div class="col-md-2">
-                     <img src="{{url('../')}}/images/{{Auth::user()->image}}" style="width:80%;margin-top:17px;heigth:80px" class="img-thumbnail"> 
+                     <img src="{{url('../')}}/images/{{Auth::user()->image}}" style="width:88%;margin-top:17px;heigth:80px" class="img-thumbnail"> 
                         <h4 class="text-center" ><b>User Profile</b></h4>
                   </div>
                    <div class="col-md-8">
@@ -113,7 +104,7 @@
                          
                         <input class="form-control" type="text"  name="dateofbirth"  value="{{$user_pro[0]->dateofbirth}}"  autofocus><br>                 
 
-                         <textarea  cols="80" rows="5"  name="about">{{$user_pro[0]->about}}</textarea> 
+                         <textarea  name="about" style="height: 102px; width: 100%;">{{$user_pro[0]->about}}</textarea> 
                                            
                        <button class="btn btn-primary">Update <i class="fa fa-fw fa-unlock-alt"></i></button>
                     </form>
@@ -121,15 +112,19 @@
 
                   <div class="col-md-2">
                     
-                  </div>
-                             
+                  </div>                             
                 </div>
                 <div class="modal-footer" style="background-color: white; height: 41%;">
-                  <button type="button" class="btn btn-info" data-dismiss="modal" style="margin-top: 41%;">Close</button>
+                  <button type="button" class="btn btn-info" data-dismiss="modal" style="margin-top: 33%;">Close</button>
                 </div>
               </div>             
             </div>
         </div>
+<?php 
+  $friends = DB::table('friendships as f')->leftjoin('users as u','u.id','=','f.requester')
+                                                      ->where('f.user_requested',Auth::user()->id)
+                                                      ->get();
+ ?>
 
               <div class="col-md-6">
                 <div class="panel panel-default">
@@ -144,15 +139,15 @@
                  <!-- Display only friends images -->
                  @if($friends)
                       @foreach($friends as $img)
-                      <li style="width: 15%;">
+                      <li style="width: 11%;">
                         <a href="{{url('profile')}}/{{$img->firstname}}" >
                            <img src="{{url('../')}}/images/{{$img->image}}"
-                              width="95px"  class="img-rounded" style="display: block;max-width: 100%;height: 15%;"  title="{{$img->firstname}}"/>
+                              width="95px"  class="img-rounded" style="display: block;max-width: 100%;height: 89px;"  title="{{$img->firstname}}"/>
                         </a>
                       </li>
                       @endforeach
                       @else
-                       
+                         <marquee  behavior="slide" scrollamount="5">No Friends</marquee>
                       @endif
                     </ul>
                   </div>
@@ -188,16 +183,19 @@
                                         $check = DB::table('friendships')
                                                       ->where('requester',Auth::user()->id)
                                                       ->where('user_requested',$frnd->id)
+                                                      ->where('status',0)
                                                       ->first();
                                            if($check == '')
                                            {
                                      ?>                     
                                            <p>
-                                                <a href="{{url('/')}}/addFriend/{{$frnd->id}}"
-                                                     class="btn btn-primary">Add Friend</a>
+                                             <a class="btn btn-primary request">Add Friend
+                                                <input type="hidden" class="add_id" value="{{$frnd->id}}">
+                                                <input type="hidden" class="baseUrl" value="{{url('addFriend')}}">
+                                              </a>
                                           </p>  
                                        <?php } else { ?>
-                                             <a href="" class="btn btn-primary" style="margin-left: -74px;">Requeste Already Send
+                                             <a  class="btn btn-primary alreaysend" style="margin-left: -74px;">Requeste Already Send
                                               </a>
                                        <?php } ?>                                                                 
                                     </div>
@@ -262,6 +260,28 @@
           </div>
 
         </div>
-
  @endsection
  <script src="{{ asset('js/app.js') }}"></script>
+ <script type="text/javascript">
+   $(document).ready(function(){
+     $('.request').on('click',function(){
+      var url = $('.baseUrl').val();
+      var addFriend_id = $(this).find('.add_id').val();
+       //alert(addFriend_id);
+       $.ajax({
+        type: 'GET',
+        url : url,
+        data : {'addFriend_id':addFriend_id},
+
+           success:function(response){
+               toastr.success('Accepted Friend Request!', 'Success Alert', {timeOut: 5000});
+               //$('#user_uniq'+ response[1]).delay(1000).fadeOut();
+                //alert('successfully');
+                //$('.alreaysend').html(response)
+               //console.log(response);
+                location.reload();
+           },
+       });
+     });
+   });
+ </script>

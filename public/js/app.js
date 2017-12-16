@@ -987,6 +987,9 @@ window.Vue = __webpack_require__(35);
  */
 
 Vue.component('example', __webpack_require__(38));
+Vue.component('modal', {
+    template: '#msgmodel'
+});
 
 var app = new Vue({
     el: '#app',
@@ -1002,7 +1005,14 @@ var app = new Vue({
         posts: [],
         commentSeen: false,
         commentadd: {},
-        comments: ''
+        comments: '',
+        messages: [],
+        privatemsgs: [],
+        conID: '',
+        msgFrom: '',
+        myfriends: [],
+        friend_id: '',
+        showModal: false
     },
 
     ready: function ready() {
@@ -1016,11 +1026,17 @@ var app = new Vue({
             Vue.filter('myTime', function (value) {
                 return moment(value).fromNow();
             });
+        }).catch(function (response) {
+            console.log(error); // run if we have error
         });
 
-        /*.catch(function(response){
+        //get all messages of friends
+        axios.get('http://127.0.0.1:8000/getmessages').then(function (response) {
+            console.log(response.data); //show if success
+            app.messages = response.data;
+        }).catch(function (response) {
             console.log(error); // run if we have error
-        });*/
+        });
     },
 
 
@@ -1072,13 +1088,14 @@ var app = new Vue({
             axios.post('http://127.0.0.1:8000/addpost', {
                 content: this.content
             }).then(function (response) {
-                console.log("save Successfully"); //show if success
+                //console.log(response.data); //show if success
                 _this3.content = '';
                 if (response.status === 200) {
                     app.posts = response.data;
+                    //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
                 }
             }).catch(function (response) {
-                console.log(error); // run if we have error
+                //console.log(error); // run if we have error
             });
         },
 
@@ -1090,6 +1107,7 @@ var app = new Vue({
             axios.get('http://127.0.0.1:8000/deletepost/' + id).then(function (response) {
                 console.log(response); //show if success
                 _this4.posts = response.data;
+                //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
             }).catch(function (response) {
                 console.log(error); // run if we have error
             });
@@ -1109,6 +1127,19 @@ var app = new Vue({
         },
 
 
+        /*************** Add Dislikes On Post *************************/
+        UnlikePost: function UnlikePost(id) {
+            var _this6 = this;
+
+            axios.get('http://127.0.0.1:8000/DislikePost/' + id).then(function (response) {
+                console.log(response); //show if success
+                _this6.posts = response.data;
+            }).catch(function (response) {
+                console.log(error); // run if we have error
+            });
+        },
+
+
         /*************** Add Comments On Post *************************/
         sendComment: function sendComment(post, key) {
             axios.post('http://127.0.0.1:8000/addcomments', {
@@ -1121,6 +1152,76 @@ var app = new Vue({
                     app.posts = response.data;
                 }
             }).catch(function (response) {
+                console.log(error); // run if we have error
+            });
+        },
+
+
+        /*************** get Messages between two friends by Id  *************************/
+        msg: function msg(id) {
+            axios.get('http://127.0.0.1:8000/getmessages/' + id).then(function (response) {
+                console.log(response.data); //show if success
+                app.privatemsgs = response.data;
+                app.conID = response.data[0].conversion_id;
+            }).catch(function (response) {
+                console.log(error); // run if we have error
+            });
+        },
+
+        /*************** get values When key pressed *************************/
+        inputHandler: function inputHandler(e) {
+            if (e.keyCode === 13 && !e.shiftKey) {
+                e.preventDefault();
+                this.sendMsg();
+            }
+        },
+
+
+        /*************** send Messages between two friends *************************/
+        sendMsg: function sendMsg() {
+            if (this.msgFrom) {
+                axios.post('http://127.0.0.1:8000/sendMessage', {
+                    conID: this.conID,
+                    msg: this.msgFrom
+                }).then(function (response) {
+                    console.log(response.data); //show if success
+                    if (response.status === 200) {
+                        app.privatemsgs = response.data;
+                        this.msgFrom = '';
+                    }
+                });
+            }
+        },
+
+        /*************** Get all confirm friends for chating *************************/
+        allmsg: function allmsg() {
+            axios.get('http://127.0.0.1:8000/newfriends', {}).then(function (response) {
+                //console.log(response.data); //show if success
+                if (response.status === 200) {
+                    app.myfriends = response.data;
+                }
+            });
+        },
+
+
+        /*************** get friends for start chating by id *************************/
+        friendID: function friendID(id) {
+            app.friend_id = id;
+            //window.location.replace('http://127.0.0.1:8000/messages');
+        },
+        sendNewMsg: function sendNewMsg() {
+            axios.post('http://127.0.0.1:8000/sendNewMessage', {
+                friend_id: this.friend_id,
+                msg: this.newMsgFrom
+            }).then(function (response) {
+                console.log(response.data); // show if success
+                if (response.status === 200) {
+                    //alert(response.data);
+                    // window.location.replace('http://127.0.0.1:8000/messages');
+                    app.privatemsgs = response.data;
+                    app.msg = 'your message has been sent successfully';
+                }
+            }).catch(function (error) {
                 console.log(error); // run if we have error
             });
         }

@@ -13,12 +13,21 @@
   <!-- Vendor CSS BUNDLE
     Includes styling for all of the 3rd party libraries used with this module, such as Bootstrap, Font Awesome and others.
     TIP: Using bundles will improve performance by reducing the number of network requests the client needs to make when loading the page. -->
-
+    <link href="{{ asset('css/comman.css') }}" rel="stylesheet">
     <link href="{{ asset('web/css/vendor/all.css') }}" rel="stylesheet">
     <link href="{{ asset('web/css/app/app.css') }}" rel="stylesheet">
-     <link href="{{ asset('js/parsleyjs/parsley.js') }}" rel="stylesheet">
+    <link href="{{ asset('js/parsleyjs/parsley.js') }}" rel="stylesheet">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
+    {{-- <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+
     <style type="text/css">
+    .cover_img
+    {
+      width: 100%;
+      height: 100%;
+    }
     .span_div
     {
        padding-left: 16px;
@@ -112,11 +121,113 @@
     }
       .badge_content
     {
-        background:red;
+        background:wheat;
         position: relative;
         top: -15px;
         left: -10px;
     }
+    /*******************************
+* MODAL AS LEFT/RIGHT SIDEBAR
+* Add "left" or "right" in modal parent div, after class="modal".
+* Get free snippets on bootpen.com
+*******************************/
+  .modal.left .modal-dialog,
+  .modal.right .modal-dialog {
+    position: fixed;
+    margin: auto;
+    width: 320px;
+    height: 100%;
+    -webkit-transform: translate3d(0%, 0, 0);
+        -ms-transform: translate3d(0%, 0, 0);
+         -o-transform: translate3d(0%, 0, 0);
+            transform: translate3d(0%, 0, 0);
+  }
+
+  .modal.left .modal-content,
+  .modal.right .modal-content {
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  .modal.left .modal-body,
+  .modal.right .modal-body {
+    padding: 15px 15px 80px;
+  }
+
+/*Left*/
+  .modal.left.fade .modal-dialog{
+    left: -320px;
+    -webkit-transition: opacity 0.3s linear, left 0.3s ease-out;
+       -moz-transition: opacity 0.3s linear, left 0.3s ease-out;
+         -o-transition: opacity 0.3s linear, left 0.3s ease-out;
+            transition: opacity 0.3s linear, left 0.3s ease-out;
+  }
+  
+  .modal.left.fade.in .modal-dialog{
+    left: 0;
+  }
+        
+/*Right*/
+  .modal.right.fade .modal-dialog {
+    right: -320px;
+    -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+       -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+         -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+            transition: opacity 0.3s linear, right 0.3s ease-out;
+  }
+  
+  .modal.right.fade.in .modal-dialog {
+    right: 0;
+  }
+
+/* ----- MODAL STYLE ----- */
+  .modal-content {
+    border-radius: 0;
+    border: none;
+  }
+
+  .modal-header {
+    border-bottom-color: #EEEEEE;
+    background-color: #FAFAFA;
+  }
+
+/* ----- v CAN BE DELETED v ----- */
+body {
+  background-color: #78909C;
+}
+
+.demo {
+  padding-top: 60px;
+  padding-bottom: 110px;
+}
+
+.btn-demo {
+  margin: 15px;
+  padding: 10px 15px;
+  border-radius: 0;
+  font-size: 16px;
+  background-color: #FFFFFF;
+}
+
+.btn-demo:focus {
+  outline: 0;
+}
+
+.demo-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 15px;
+  background-color: #212121;
+  text-align: center;
+}
+
+.demo-footer > a {
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  color: #fff;
+}
    </style>
 <!-- Vendor CSS Standalone Libraries
         NOTE: Some of these may have been customized (for example, Bootstrap).
@@ -193,7 +304,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
 </head>
 
 <body>
-<div id="app">
+<div id="app" style="    height: 965px;">
   <div class="st-container">
 
     <!-- Fixed navbar -->
@@ -234,59 +345,81 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
             </li>
           </ul>
           <ul class="nav navbar-nav navbar-right" >
-               <li><a href="{{url('friendlist')}}" >Friends List</a></li>
-                <li><a href="{{url('requestes')}}" > Friend Request  (
+               <li>
+                   <a href="{{url('friendlist')}}" >My Friends List
+                       [  {{App\Friendship::where('status',1)->where('user_requested',Auth::user()->id)->count()}}
+                       ]
+                   </a>
+                </li>
+                <li>
+                   <a href="{{url('requestes')}}" > Friend Request  (
                           {{App\Friendship::where('status',0)->where('user_requested',Auth::user()->id)->count()}}
-                            )</a></li>
-            
-            <li ><a href="{{url('friends')}}/{{ Auth::user()->slug }}" >All Friends</a></li>
-            <li ><a href="{{url('requestes')}}"><i class="fa fa-users" style="color:black"></i></a></li>
-               <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >
-                       <i class="fa fa-globe fa-2x" aria-hidden="true" style="color: black;margin-top: 12px;"></i> 
-                        <span class="badge badge_content">
-                            {{ DB::table('notifications')->where('status',1)
-                                                         ->where('user_hero',Auth::user()->id)
-                                                         ->count()
-                                }}
-                        </span>
-                    </a>
-                  <?php 
-                       $notes = DB::table('notifications as n')->leftjoin('users as u','u.id','n.user_logged')
-                                                               ->where('user_hero',Auth::user()->id)
-                                                               //->where('status',1)
-                                                               ->orderBy('n.created_at','desc')
-                                                               ->get();
-                     ?>
-
-                  <ul class="dropdown-menu">
-                      @foreach($notes as $note)
-                          @if($note->status == 1)
-                              <li style="background-color:darkgrey"> <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">                                                 
-                           @else
-                                <li> 
-                           @endif 
-                                  <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">
-                                    <img src="{{url('../')}}/images/{{$note->image}}"  height="50px" width="50px" class="img-rounded ">
-                                     <b style="color:green; margin-left: 13px;">{{ucwords($note->firstname)}}</b><small><span style="argin-left: 8px;">{{$note->note}}</span></small>
-                                      <small><i class="fa fa-users" aria-hidden="true"  style="color: black;"></i></small>
-                                 </a>
-                                      <hr class="border_line">
-                              </li>
-                            
-                      @endforeach
-                  </ul>
-              </li>
+                            )
+                   </a>
+                </li>
                 
-                  <li><a href="#" class="dropdown-toggle user" data-toggle="dropdown">
-                      <i class="fa fa-envelope" aria-hidden="true" style="color:black"></i>
-                  </a></li>
+                <li>
+                   <a href="{{url('friends')}}/{{ Auth::user()->slug }}" >All Friends 
+                        [  {{ DB::table('users')->where('users.id','!=',Auth::user()->id)
+                                                             ->count()
+                                    }} ]
+                    </a>
+                </li>
 
-            <li class="hidden-xs">
-              <a href="#sidebar-chat" data-toggle="sidebar-menu" data-effect="st-effect-1">
-                <i class="fa fa-comments"></i>
-              </a>
-            </li>
+                  <li>
+                      <a href="#"  style="color: black" >
+                        <i class="fa fa-envelope" style="font-size:24px;margin-top: 12px;" ></i>
+                          <span class="badge badge_content">
+                              {{ DB::table('messages')->where('status','=','1')
+                                                           ->where('user_to',Auth::user()->id)
+                                                           ->count()
+                                  }}
+                          </span>
+                      </a>            
+                 </li>
+                 <li class="dropdown" id="unread" >
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" >
+                         <i class="fa fa-globe fa-2x" aria-hidden="true" style="color: black;margin-top: 12px;"></i> 
+                          <span class="badge badge_content">
+                              {{ DB::table('notifications')->where('status','!=','NULL')
+                                                           ->where('user_hero',Auth::user()->id)
+                                                           ->count()
+                                  }}
+                          </span>
+                      </a>
+                    <?php 
+                         $notes = DB::table('notifications as n')->leftjoin('users as u','u.id','n.user_logged')
+                                                                 ->where('user_hero',Auth::user()->id)
+                                                                 //->where('status',1)
+                                                                 ->orderBy('n.created_at','desc')
+                                                                 ->get();
+                       ?>
+
+                    <ul class="dropdown-menu" id="notification">
+                        @foreach($notes as $note)
+                            @if($note->status == 1)
+                                <li> <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">                                                 
+                             @else
+                                  <li> 
+                             @endif 
+                                    <a href="{{url('notifications')}}/{{ $note->slug }}/{{$note->id}}">
+                                      <img src="{{url('../')}}/images/{{$note->image}}"  height="50px" width="50px" class="img-rounded ">
+                                       <b style="color:green; margin-left: 13px;">{{ucwords($note->firstname)}}</b><small><span style="margin-left: 8px;">{{$note->note}}</span></small>
+                                        <small><i class="fa fa-users" aria-hidden="true"  style="color: black;"></i></small>
+                                   </a>
+                                        <hr class="border_line">
+                                </li>
+                              
+                        @endforeach
+                    </ul>
+                 </li>
+                
+                  <li class="hidden-xs" id="chat">
+                    <a href="#sidebar-chat" data-toggle="sidebar-menu" data-effect="st-effect-1" style="padding: 10px;color: black;">
+                       <i class="fa fa-comments fa-2x" aria-hidden="true"></i>
+                    </a>            
+                  </li>
+
             <!-- User -->
             <li class="dropdown" >
               <a href="#" class="dropdown-toggle user" data-toggle="dropdown" id="user_section">
@@ -294,9 +427,9 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
               </a>
               <ul class="dropdown-menu" role="menu" id='user_profile'>
                 <li><a href="{{url('profile')}}/{{ Auth::user()->slug }}">Profile</a></li>
-                <li><a href="user-private-messages.html">Messages</a></li>
+                <li><a href="{{url('messages')}}">Messages</a></li>
                 <li>
-                    <a href="{{ route('logout') }}"
+                     <a href="{{ route('logout') }}"
                         onclick="event.preventDefault();
                                  document.getElementById('logout-form').submit();">
                         Logout
@@ -322,127 +455,81 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
             <h4>{{ucwords(Auth::user()->firstname)}}</h4>
           </div>
         </div>
-        <div class="category">About</div>
-        <div class="sidebar-block">
-          <ul class="list-about">
-            <li><i class="fa fa-map-marker"></i> Amsterdam, NL</li>
-            <li><i class="fa fa-link"></i> <a href="#">www.mosaicpro.biz</a></li>
-            <li><i class="fa fa-twitter"></i> <a href="#">/mosaicprobiz</a></li>
-          </ul>
-        </div>
-        <div class="category">Photos</div>
+   
+        <div class="category">Friends</div>
+        <?php
+              $friends = DB::table('friendships as f')->leftjoin('users as u','u.id','=','f.requester')
+                                                      ->where('f.user_requested',Auth::user()->id)
+                                                      ->get();
+         ?>
+          <!--Start My Friends  -->
         <div class="sidebar-block">
           <div class="sidebar-photos">
             <ul>
+              @foreach($friends as $friend)
               <li>
                 <a href="#">
-                   <img src=" {{ asset('Web/images/place1.jpg') }}" alt="people" />
+                   <img src=" {{ url('images')}}/{{$friend->image}}" alt="people"  style="height: 50px;" />
                 </a>
               </li>
-              <li>
-                <a href="#">
-                     <img src=" {{ asset('Web/images/place2.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                     <img src=" {{ asset('Web/images/place3.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <img src=" {{ asset('Web/images/food1.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                   <img src=" {{ asset('Web/images/food1.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                   <img src=" {{ asset('Web/images/place3.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                   <img src=" {{ asset('Web/images/place2.jpg') }}" alt="people" />
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <img src=" {{ asset('Web/images/place1.jpg') }}" alt="people" />
-                </a>
-              </li>
+              @endforeach
             </ul>
             <a href="#" class="btn btn-primary btn-xs">view all</a>
           </div>
         </div>
-        <div class="category">Activity</div>
+
+      <div class="category">MyPosts</div>
+        <!--End My Friends  --> 
+          <?php
+              $posts = DB::table('posts as p')->leftjoin('users as u','u.id','=','p.user_id')
+                                                      ->where('p.user_id',Auth::user()->id)
+                                                      ->get();
+         ?>
+       <!--Start My Posts  -->
+        <div class="sidebar-block">
+          <div class="sidebar-photos">
+            <ul>
+             @if(!empty('posts'))
+                   @foreach($posts as $post)
+                     @if($post->postImage)
+                        <li>
+                          <a href="#">
+                             <img src=" {{ url('postImages')}}/{{$post->postImage}}" alt="no image" title="{{$post->firstname}}" style="height: 50px;" />
+                          </a>
+                        </li>
+                     @endif
+                    @endforeach
+              @else
+               <li><a href="" style="color: white;">No Any Post</a></li>
+              @endif
+            </ul>
+            <a href="#" class="btn btn-primary btn-xs">view all</a>
+          </div>
+        </div>
+        <!--End My Posts  -->  
+        <div class="category">About Friends</div>
         <div class="sidebar-block">
           <ul class="sidebar-feed">
-            <li class="media">
-              <div class="media-left">
-                <span class="media-object">
-                            <i class="fa fa-fw fa-bell"></i>
-                        </span>
-              </div>
-              <div class="media-body">
-                <a href="" class="text-white">Adrian</a> just logged in
-                <span class="time">2 min ago</span>
-              </div>
-              <div class="media-right">
-                <span class="news-item-success"><i class="fa fa-circle"></i></span>
-              </div>
-            </li>
-            <li class="media">
-
-              <div class="media-left">
-                <span class="media-object">
-                            <i class="fa fa-fw fa-bell"></i>
-                        </span>
-              </div>
-              <div class="media-body">
-                <a href="" class="text-white">Adrian</a> just added <a href="" class="text-white">mosaicpro</a> as their office
-                <span class="time">2 min ago</span>
-              </div>
-              <div class="media-right">
-                <span class="news-item-success"><i class="fa fa-circle"></i></span>
-              </div>
-            </li>
-            <li class="media">
-              <div class="media-left">
-                <span class="media-object">
-                            <i class="fa fa-fw fa-bell"></i>
-                        </span>
-              </div>
-              <div class="media-body">
-                <a href="" class="text-white">Adrian</a> just logged in
-                <span class="time">2 min ago</span>
-              </div>
-            </li>
-            <li class="media">
-              <div class="media-left">
-                <span class="media-object">
-                            <i class="fa fa-fw fa-bell"></i>
-                        </span>
-              </div>
-              <div class="media-body">
-                <a href="" class="text-white">Adrian</a> just logged in
-                <span class="time">2 min ago</span>
-              </div>
-            </li>
-            <li class="media">
-              <div class="media-left">
-                <span class="media-object">
-                            <i class="fa fa-fw fa-bell"></i>
-                        </span>
-              </div>
-              <div class="media-body">
-                <a href="" class="text-white">Adrian</a> just logged in
-                <span class="time">2 min ago</span>
-              </div>
-            </li>
+           @if( ! empty('friends'))
+                 @foreach($friends as $frid)
+                  <li class="media">
+                    <div class="media-left">
+                      <span class="media-object">
+                                  <i class="fa fa-fw fa-bell"></i>
+                              </span>
+                    </div>
+                    <div class="media-body">
+                      <a href="" class="text-white">{{$frid->firstname}}</a>
+                      <span class="time"> Last Login : {{ \Carbon\Carbon::createFromFormat('Y-m-d H:i:s',$frid->created_at)->diffForHumans() }} </span>
+                    </div>
+                    <div class="media-right">
+                      <span class="news-item-success"><i class="fa fa-circle"></i></span>
+                    </div>
+                  </li>
+                 @endforeach 
+           @else
+             <li><a href="" style="color: white;">No Friends</a></li>
+           @endif
           </ul>
         </div>
       </div>
@@ -453,7 +540,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
         <div class="modal fade" id="myModal" role="dialog">
             <div class="modal-dialog  modal-lg">
               <!-- Modal content-->
-              <div class="modal-content" style="height: 90%;">
+              <div class="modal-content" style="height:75%;">
                 <div class="modal-header user_model" >
                   <button type="button" class="close" data-dismiss="modal">&times;</button>
                   <h4 class="modal-title">Upload Profile Picture</h4>
@@ -465,7 +552,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                        <div class="upload_img">
                          <span class="glyphicon glyphicon-upload span_div" ></span><b>photo upload</b><br><br>
                          <input type="file" name="image" style="position:absolute;left: 0;top: 0; opacity: 0" data-parsley-required="true"  required> 
-                         <button type="submit" class="btn btn-danger">Upload</button>
+                         <button type="submit" class="btn btn-success">Upload</button>
                        </div>          
                     </div>
                      </form> 
@@ -482,8 +569,8 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                                   </div>
                                  </div> -->  
                                  <div class="col-md-6">
-                                    <img src="{{url('../')}}/images/{{Auth::user()->image}}" style="width:74%;margin-top: 17px"><br>
-                                       <h4 class="text-center" style="margin-left: -131px;"><b>Old Image</b></h4>
+                                    <img src="{{url('../')}}/images/{{Auth::user()->image}}" style="width:200%;margin-top: 17px;height: 54%;"><br>
+                                       <h4 class="text-center col-sm-offset-5" ><b>Old Image</b></h4>
                                  </div>
                                  <div class="col-md-6">
                                    
@@ -504,183 +591,44 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                                   </div>
                      </div>  -->          
                 </div>
-                <div class="modal-footer" style="background-color: white; ">
-                  <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
-                </div>
+               <!--  <div class="modal-footer" style="background-color: white; ">
+                 <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
+               </div> -->
               </div>             
             </div>
         </div>
         <!--End Profile  Modal -->
 
 
-
     <!-- Sidebar component with st-effect-1 (set on the toggle button within the navbar) -->
-    <div class="sidebar sidebar-chat right sidebar-size-2 sidebar-offset-0 chat-skin-white" id=sidebar-chat>
+    <div class="sidebar sidebar-chat right sidebar-size-2 sidebar-offset-0 chat-skin-white" id='sidebar-chat'>
       <div class="split-vertical">
         <div class="chat-search">
           <input type="text" class="form-control" placeholder="Search" />
         </div>
 
-        <ul class="chat-filter nav nav-pills ">
-          <li class="active"><a href="#" data-target="li">All</a></li>
-          <li><a href="#" data-target=".online">Online</a></li>
-          <li><a href="#" data-target=".offline">Offline</a></li>
+        <ul class="chat-filter nav nav-pills " >
+          <li class="active" style="cursor: pointer;"><a @click="allmsg()" data-target=".online" >All</a></li>
+          <li><a href="#" data-target="">Online</a></li>
+          <li><a href="#" data-target=".offline">Offline</a></li> 
         </ul>
-        <div class="split-vertical-body">
+
+   <div class="split-vertical-body">
           <div class="split-vertical-cell">
             <div data-scrollable>
               <ul class="chat-contacts">
-                <li class="online" data-user-id="1">
+                
+                <li class="online" data-user-id="1"  v-for="frnd in myfriends">
                   <a href="#">
                     <div class="media">
                       <div class="pull-left">
                         <span class="status"></span>
-                        <img src="{{asset('web/images/people/110/guy-6.jpg')}}" width="40" class="img-circle" />
+                        <img  :src="'{{url('../')}}/images/'+frnd.image" width="40" class="img-circle" />
                       </div>
                       <div class="media-body">
 
-                        <div class="contact-name">Jonathan S.</div>
-                        <small>"Free Today"</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-
-                <li class="online away" data-user-id="2">
-                  <a href="#">
-
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src="{{ asset('Web/images/people/110/woman-5.jpg') }}" width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Mary A.</div>
-                        <small>"Feeling Groovy"</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online" data-user-id="3">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left ">
-                        <span class="status"></span>
-                        <img src=" {{ asset('Web/images/people/110/guy-3.jpg') }}" width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Adrian D.</div>
-                        <small>Busy</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="offline" data-user-id="4">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <img src=" {{ asset('Web/images/people/110/woman-6.jpg') }} " width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Michelle S.</div>
-                        <small>Offline</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="offline" data-user-id="5">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <img src="{{ asset('Web/images/people/110/woman-7.jpg') }} " width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Daniele A.</div>
-                        <small>Offline</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online" data-user-id="6">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src="{{ asset('Web/images/people/110/guy-4.jpg') }}" width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Jake F.</div>
-                        <small>Busy</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online away" data-user-id="7">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src=" {{ asset('Web/images/people/110/woman-6.jpg') }} " width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Jane A.</div>
-                        <small>"Custom Status"</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="offline" data-user-id="8">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src="{{ asset('Web/images/people/110/woman-8.jpg') }}" width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Sabine J.</div>
-                        <small>"Offline right now"</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online away" data-user-id="9">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src=" {{ asset('Web/images/people/110/woman-9.jpg') }} " width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Danny B.</div>
-                        <small>Be Right Back</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online" data-user-id="10">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src="{{ asset('Web/images/people/110/woman-8.jpg') }}" width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">Elise J.</div>
-                        <small>My Status</small>
-                      </div>
-                    </div>
-                  </a>
-                </li>
-                <li class="online" data-user-id="11">
-                  <a href="#">
-                    <div class="media">
-                      <div class="pull-left">
-                        <span class="status"></span>
-                        <img src="{{ asset('Web/images/people/110/guy-3.jpg') }} " width="40" class="img-circle" />
-                      </div>
-                      <div class="media-body">
-                        <div class="contact-name">John J.</div>
-                        <small>My Status #1</small>
+                        <div class="contact-name">@{{frnd.firstname}}</div>
+                        <small>@{{frnd.gender}}</small>
                       </div>
                     </div>
                   </a>
@@ -690,7 +638,9 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
           </div>
         </div>
       </div>
-    </div>
+  </div>
+
+
     <script id="chat-window-template" type="text/x-handlebars-template">
 
 
@@ -720,10 +670,22 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
                   <span class="fa fa-ellipsis-h"></span>
                 </button>
               </div>
+                   <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse collapsed_nav" id="subnav">
+                <ul class="nav navbar-nav " style="margin-top: -12px;">
+                  <li class="active"><a href="index.html"><i class="fa fa-fw icon-ship-wheel"></i> Timeline</a></li>
+                  <li><a href="user-public-profile.html"><i class="fa fa-fw icon-user-1"></i> About</a></li>
+                  <li><a href="user-public-users.html"><i class="fa fa-fw fa-users"></i> Friends</a></li>
+                </ul>
+                <ul class="nav navbar-nav hidden-xs navbar-right " style="margin-top: -12px;">
+                  <li><a href="#" data-toggle="chat-box">Chat <i class="fa fa-fw fa-comment-o"></i></a></li>
+                </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+            </div>
 
-
-       
-
+          </nav> 
+        
            @yield('content') 
 
           </div>
@@ -794,7 +756,7 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
     Do not use it simultaneously with the separate bundles above. -->
 
     <!-- Scripts -->
-  <!--  <script src="{{ asset('web/js/vendor/all.js') }}"></script>-->
+  <script src="{{ asset('web/js/vendor/all.js') }}"></script> 
 
   <!-- Vendor Scripts Standalone Libraries -->
   <!-- <script src="js/vendor/core/all.js"></script> -->
@@ -855,9 +817,13 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
         app.js already includes main.js so this should be loaded
         ONLY when using the standalone modules; -->
   <!-- <script src="js/app/main.js"></script> -->
-     <!--    <script src="{{ asset('web/js/app/app1.js') }}"></script>  -->
-<script src="{{ asset('js/app.js') }}"></script>
- <script src="{{ asset('web/js/app/app1.js') }}"></script> 
+    <script src="{{ asset('web/js/app/app1.js') }}"></script>
+      <!-- toastr notifications -->
+    {{-- <script type="text/javascript" src="{{ asset('toastr/toastr.min.js') }}"></script> --}}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.2/moment.min.js"></script>
+ <script src="{{ asset('js/app.js') }}"></script>
+ <!--<script src="{{ asset('web/js/app/app1.js') }}"></script>  -->
   <script type="text/javascript">
    $(document).ready(function(){
      $('#hide_comment').on('click',function(){
@@ -868,6 +834,35 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
      $('#user_section').on('click',function(){
        $('#user_profile').toggle();
      })
+
+     $('#unread').on('click',function(){
+        $('#notification').toggle();
+     })
+
+       $("#logout").on('click',function(e) {
+          e.preventDefault();
+         var url = $('#baseUrl').val();
+         
+         $.ajax({
+          type:'POST',
+          url:url,
+
+         });
+      });
+
+      $('#allmsg').on('click',function(){
+          var url = '{{url("newMessage")}}';
+
+          $.ajax({
+           type: 'GET',
+           url : url,
+
+           success:function(response){
+            // console.log(response.data);
+             $(".friends").append(response);
+           }
+          });
+      }) 
    });
 
   </script>

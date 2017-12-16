@@ -10,19 +10,19 @@ trait Friendable
 		return 'working';
 	}
 
-	public function addFriend($user_id)
+	public function addFriend($addFriend_id)
 	{
 		
       $Friendships = Friendship::create([
         
          'requester' => $this->id,
-         'user_requested' => $user_id,
+         'user_requested' => $addFriend_id,
 
       	]);
 
       if($Friendships)
       {
-      	return $Friendships;
+          return response()->json($Friendships);
       }
       else
       {

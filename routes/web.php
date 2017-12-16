@@ -21,10 +21,12 @@ Route::get('/test',function(){
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
 
-//image profile user
 
+Route::group(['middleware'=>['auth']],function (){
+ Route::get('/home', 'HomeController@index')->name('home');
+
+ //image profile user
 Route::post('upload', 'DashboardController@saveImg');
 
 //Profile Update User
@@ -41,6 +43,7 @@ Route::post('addpost', 'PostController@addpost');
 Route::post('postImg', 'PostController@saveImg');
 
 Route::get('LikePost/{id}', 'PostController@LikePost');
+Route::get('DislikePost/{id}', 'PostController@DislikePost');
 
 //Comment Post Route
  Route::post('addcomments','CommentController@addcomments');
@@ -52,11 +55,19 @@ Route::get('LikePost/{id}', 'PostController@LikePost');
 
 Route::get('friends/{slug}','FriendshipController@findfriends');
 Route::get('friends/images','FriendshipController@myfriendsimages');
-Route::get('addFriend/{id}','FriendshipController@addFriend');
+Route::get('addFriend','FriendshipController@addFriend');
 Route::get('requestes','FriendshipController@requestes');
-Route::get('confirm/request/{slug}/{id}','FriendshipController@confirmrequest');
+Route::get('confirm/request','FriendshipController@confirmrequest');
+Route::get('remove/request','FriendshipController@removerequest');
 Route::get('friendlist','FriendshipController@friendlist');
-
-
 Route::get('notifications/{id}','NotificationController@getfriend');
+
+
+Route::get('messages','MessageController@index');
+Route::get('getmessages','MessageController@getmessages');
+Route::get('getmessages/{id}','MessageController@getmesges');
+Route::post('sendMessage','MessageController@sendMessage');
+Route::post('sendNewMessage', 'MessageController@sendNewMessage');
+Route::get('newfriends','MessageController@newMessage');
+});
 

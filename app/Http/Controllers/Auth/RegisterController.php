@@ -82,7 +82,7 @@ class RegisterController extends Controller
                 'lastname' => $data['lname'],
                 'gender' => $data['gender'],
                 'email' => $data['email'],
-                'slug' => str_slug($data['name'],'-'),
+                'slug' => str_slug($data['fname'],'-'),
                 'verifyToken' => Str::random(40),
                 'image' => $img_path,
                 'coverpic' => $coverpic,

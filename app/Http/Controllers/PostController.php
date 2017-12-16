@@ -10,6 +10,7 @@ use timestamp;
 use DB;
 use now;
 use App\Like;
+use App\Dislike;
 																											
 class PostController extends Controller
 {
@@ -102,10 +103,24 @@ class PostController extends Controller
         $post = new Like;
         $post->post_id = $id;
         $post->user_id = Auth::user()->id;
+        $post->status = 1;
         $post->save();
         if($post)
         {
            return  post::with('user','like','comment')->orderBy('created_at','DESC')->take(4)->get();  
+        }
+    }
+
+     public function DislikePost($id)
+    {
+        $post = new Dislike;
+        $post->post_id = $id;
+        $post->user_id = Auth::user()->id;
+        $post->status = 1;
+        $post->save();
+        if($post)
+        {
+           return  post::with('user','dislike','comment')->orderBy('created_at','DESC')->take(4)->get();  
         }
     }
 }

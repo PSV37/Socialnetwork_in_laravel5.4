@@ -12,28 +12,14 @@ class ProfileController extends Controller
 
     public function profile($slug)
     {
-          $uid = Auth::user()->id;
-       //display data to requester side user_requested Info
-      $friend1 = DB::table('friendships as f')->leftjoin('users as u','u.id','=','f.user_requested')
-                                              ->where('status',1)
-                                              ->where('requester',$uid)
-                                              ->get();
-
-       //display data to user_requested side requester Info          
-      $friend2 = DB::table('friendships as f')->leftjoin('users as u','u.id','=','f.requester')
-                                              ->where('status',1)
-                                              ->where('user_requested',$uid)
-                                              ->get();
-      // dd($friend2);
-        $friends = array_merge($friend1->toArray(),$friend2->toArray());
-
         $allfriends = DB::table('profiles as p')->join('users as u','u.id','=','p.user_id')
                                               ->where('u.id','!=',Auth::user()->id)
                                               ->get();
 
     	 $user_pro = DB::table('users as u')->leftjoin('profiles as p','p.user_id','u.id')
                                            ->where('slug',$slug)->get();
-        return view('profile.profile',compact('user_pro','friends','allfriends'))->with('data',Auth::user()->profile);
+                                           
+        return view('profile.profile',compact('user_pro','allfriends'));
     }
 
 
@@ -62,4 +48,5 @@ class ProfileController extends Controller
         session()->flash('msg','successfully updated Cover Pic');
         return back();
     }
+
 }

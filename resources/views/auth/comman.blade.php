@@ -15,6 +15,10 @@
     TIP: Using bundles will improve performance by reducing the number of network requests the client needs to make when loading the page. -->
   <link href="{{ asset('web/css/vendor/all.css') }}" rel="stylesheet">
   <link href="{{ asset('js/parsleyjs/parsley.js') }}" rel="stylesheet">
+     {{-- <link rel="stylesheet" href="{{ asset('toastr/toastr.min.css') }}"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+
+
 
   <!-- Vendor CSS Standalone Libraries
         NOTE: Some of these may have been customized (for example, Bootstrap).
@@ -154,6 +158,9 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
     To learn more about the development process, please refer to the documentation.
     Do not use it simultaneously with the separate bundles above. -->
    <script src="{{ asset('web/js/vendor/all.js') }}"></script>
+  <!-- toastr notifications -->
+    {{-- <script type="text/javascript" src="{{ asset('toastr/toastr.min.js') }}"></script> --}}
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 
   <!-- Vendor Scripts Standalone Libraries -->
   <!-- <script src="js/vendor/core/all.js"></script> -->

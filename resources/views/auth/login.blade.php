@@ -7,7 +7,7 @@
    <section class="login_section" >
      
         <div class="container-fluid">
-        <form class="form-horizontal" method="POST" action="{{ route('login') }}" data-parsley-validate>
+        <form class="form-horizontal" data-parsley-validate method="POST" action="{{route('login')}}">
             {{ csrf_field() }}
               <div class="lock-container">
                 <h1>Account Access</h1>
@@ -16,7 +16,7 @@
                   <div class="panel-body">
                     <input class="form-control" type="email" name="email" placeholder="Email" required>
                         @if ($errors->has('email'))
-                            <span class="help-block"  style="margin-left: 61px;">
+                            <span class="help-block"  style="margin-left: -6px;">
                                 <strong>{{ $errors->first('email') }}</strong>
                             </span>
                         @endif
@@ -91,6 +91,24 @@
        $('.forgot_section').hide();
        $('.login_section').show();
      });
+
+
+      $("#login").on('submit',function(e) {
+    e.preventDefault();
+    var url = "{{ route('login') }}";
+     $.ajax({   
+        method: "POST",
+        data: $("#login").serialize(),
+        url: url,
+    })
+    .done(function(data) {
+        //console.log(data);
+        window.location.href = '/home';
+    });
+   
+});
+
+
   })
 </script>
 

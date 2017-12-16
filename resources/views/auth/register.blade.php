@@ -62,7 +62,7 @@
 
                     <button class="btn btn-primary">Create Account <i class="fa fa-fw fa-unlock-alt"></i></button>
                     <a href="#" class="forgot-password">Forgot password?</a><hr>
-                    <a href="{{url('login')}}" class="forgot-password">I Already Member</a>
+                    <a data-toggle="modal" data-target="#loginModel" class="forgot-password">I Already Member</a>
                   </div>
                 </div>
               </div>
