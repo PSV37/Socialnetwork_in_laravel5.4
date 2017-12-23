@@ -21,9 +21,13 @@ Route::get('/test',function(){
 
 Auth::routes();
 
+//about forgot password
+Route::post('forgot/password','UserController@forgotPassword')->name('forgot');
+Route::get('sendEmailDone/{email}/{verifyToken}','UserController@resetPassword');
+Route::post('reset','UserController@setpassword');
 
 
-Route::group(['middleware'=>['auth']],function (){
+Route::group(['middleware'=>'auth'],function (){
  Route::get('/home', 'HomeController@index')->name('home');
 
  //image profile user
@@ -47,12 +51,10 @@ Route::get('DislikePost/{id}', 'PostController@DislikePost');
 
 //Comment Post Route
  Route::post('addcomments','CommentController@addcomments');
+ Route::get('getcomments','CommentController@getcomments');
+
  
- Route::post('forgot/password','UserController@forgotPassword')->name('forgot');
- Route::get('sendEmailDone/{email}/{verifyToken}','UserController@resetPassword');
- Route::post('reset','UserController@setpassword');
-
-
+ //about friends 
 Route::get('friends/{slug}','FriendshipController@findfriends');
 Route::get('friends/images','FriendshipController@myfriendsimages');
 Route::get('addFriend','FriendshipController@addFriend');
@@ -62,12 +64,15 @@ Route::get('remove/request','FriendshipController@removerequest');
 Route::get('friendlist','FriendshipController@friendlist');
 Route::get('notifications/{id}','NotificationController@getfriend');
 
-
+//messages bet friends
 Route::get('messages','MessageController@index');
 Route::get('getmessages','MessageController@getmessages');
 Route::get('getmessages/{id}','MessageController@getmesges');
 Route::post('sendMessage','MessageController@sendMessage');
+
+Route::get('newfriendschat','MessageController@newfriendschat');
+Route::get('newfriendslist','MessageController@newMessage');
 Route::post('sendNewMessage', 'MessageController@sendNewMessage');
-Route::get('newfriends','MessageController@newMessage');
+
 });
 

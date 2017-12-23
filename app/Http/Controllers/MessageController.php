@@ -39,9 +39,10 @@ class MessageController extends Controller
       public function getmessages()
     {
         //send msg from Auth::user
+
         $alluser1 = DB::table('users as u')->join('conversions as c','u.id','c.user_one')
                                            ->where('c.user_two',Auth::user()->id)
-                                            ->get();
+                                            ->get();                     
         //send msg to second friend
           $alluser2 = DB::table('users as u')->join('conversions as c','u.id','c.user_two')
                                              ->where('c.user_one',Auth::user()->id)
@@ -172,5 +173,11 @@ class MessageController extends Controller
                 'status' => 1
               ]);
         }
+    }
+
+
+    public function newfriendschat()
+    {
+      return view('message.newmessage');
     }
 }

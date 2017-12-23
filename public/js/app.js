@@ -970,6 +970,9 @@ module.exports = __webpack_require__(42);
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var _data;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -993,7 +996,7 @@ Vue.component('modal', {
 
 var app = new Vue({
     el: '#app',
-    data: {
+    data: (_data = {
         post: 'Upload New Post',
         image: '',
         user: '',
@@ -1003,6 +1006,7 @@ var app = new Vue({
         about: '',
         content: '',
         posts: [],
+        posts_new: [],
         commentSeen: false,
         commentadd: {},
         comments: '',
@@ -1010,19 +1014,18 @@ var app = new Vue({
         privatemsgs: [],
         conID: '',
         msgFrom: '',
-        myfriends: [],
-        friend_id: '',
-        showModal: false
-    },
+        myfriends: []
+    }, _defineProperty(_data, 'comments', []), _defineProperty(_data, 'friend_id', ''), _defineProperty(_data, 'showModal', false), _defineProperty(_data, 'rrr', 'bala'), _data),
 
     ready: function ready() {
-        this.created();
+        // this.created();
     },
 
     created: function created() {
         axios.get('http://127.0.0.1:8000/posts/display').then(function (response) {
-            console.log(response); //show if success
             app.posts = response.data;
+            //console.log('successfully') + console.log(app.posts);
+            /// alert(response.data['0'].content);
             Vue.filter('myTime', function (value) {
                 return moment(value).fromNow();
             });
@@ -1065,7 +1068,7 @@ var app = new Vue({
                 image: this.image,
                 content: this.content
             }).then(function (response) {
-                console.log("save Successfully"); //show if success
+                //console.log("save Successfully"); //show if success
                 _this2.image = '', _this2.content = '';
                 if (response.status === 200) {
                     //location.reload();
@@ -1088,9 +1091,10 @@ var app = new Vue({
             axios.post('http://127.0.0.1:8000/addpost', {
                 content: this.content
             }).then(function (response) {
-                //console.log(response.data); //show if success
+                console.log(response.data); //show if success
                 _this3.content = '';
                 if (response.status === 200) {
+                    console.log(response.data);
                     app.posts = response.data;
                     //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
                 }
@@ -1105,7 +1109,7 @@ var app = new Vue({
             var _this4 = this;
 
             axios.get('http://127.0.0.1:8000/deletepost/' + id).then(function (response) {
-                console.log(response); //show if success
+                // console.log(response); //show if success
                 _this4.posts = response.data;
                 //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
             }).catch(function (response) {
@@ -1116,11 +1120,9 @@ var app = new Vue({
 
         /*************** Add Likes On Post *************************/
         LikePost: function LikePost(id) {
-            var _this5 = this;
-
             axios.get('http://127.0.0.1:8000/LikePost/' + id).then(function (response) {
-                console.log(response); //show if success
-                _this5.posts = response.data;
+                //  console.log(response); //show if success
+                app.posts = response.data;
             }).catch(function (response) {
                 console.log(error); // run if we have error
             });
@@ -1129,11 +1131,11 @@ var app = new Vue({
 
         /*************** Add Dislikes On Post *************************/
         UnlikePost: function UnlikePost(id) {
-            var _this6 = this;
+            var _this5 = this;
 
             axios.get('http://127.0.0.1:8000/DislikePost/' + id).then(function (response) {
-                console.log(response); //show if success
-                _this6.posts = response.data;
+                //console.log(response); //show if success
+                _this5.posts = response.data;
             }).catch(function (response) {
                 console.log(error); // run if we have error
             });
@@ -1146,9 +1148,10 @@ var app = new Vue({
                 comment: this.commentadd[key],
                 id: post.id
             }).then(function (response) {
-                console.log('save Successfully'); //show if success
+                // console.log('save Successfully'); //show if success
                 this.commentadd = '';
                 if (response.status === 200) {
+                    console.log(response.data);
                     app.posts = response.data;
                 }
             }).catch(function (response) {
@@ -1160,7 +1163,7 @@ var app = new Vue({
         /*************** get Messages between two friends by Id  *************************/
         msg: function msg(id) {
             axios.get('http://127.0.0.1:8000/getmessages/' + id).then(function (response) {
-                console.log(response.data); //show if success
+                //console.log(response.data); //show if success
                 app.privatemsgs = response.data;
                 app.conID = response.data[0].conversion_id;
             }).catch(function (response) {
@@ -1184,7 +1187,7 @@ var app = new Vue({
                     conID: this.conID,
                     msg: this.msgFrom
                 }).then(function (response) {
-                    console.log(response.data); //show if success
+                    //console.log(response.data); //show if success
                     if (response.status === 200) {
                         app.privatemsgs = response.data;
                         this.msgFrom = '';
@@ -1195,7 +1198,7 @@ var app = new Vue({
 
         /*************** Get all confirm friends for chating *************************/
         allmsg: function allmsg() {
-            axios.get('http://127.0.0.1:8000/newfriends', {}).then(function (response) {
+            axios.get('http://127.0.0.1:8000/newfriendslist', {}).then(function (response) {
                 //console.log(response.data); //show if success
                 if (response.status === 200) {
                     app.myfriends = response.data;
@@ -1214,7 +1217,7 @@ var app = new Vue({
                 friend_id: this.friend_id,
                 msg: this.newMsgFrom
             }).then(function (response) {
-                console.log(response.data); // show if success
+                // console.log(response.data); // show if success
                 if (response.status === 200) {
                     //alert(response.data);
                     // window.location.replace('http://127.0.0.1:8000/messages');

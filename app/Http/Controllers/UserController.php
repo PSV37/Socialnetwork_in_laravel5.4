@@ -38,8 +38,8 @@ class UserController extends Controller
                {
                   $thisuser = User::findOrFail($user_reset[0]->id);             
                   $this->sendMail($thisuser);
-                  session()->flash('reset','Successfully Send Email For ForgotPassword');
-                  return back();
+                 // session()->flash('reset','Successfully Send Email For ForgotPassword');
+                  return response()->json(['success'=>'Successfully Send Email For ForgotPassword']);
                }
        }
        else
@@ -65,7 +65,7 @@ class UserController extends Controller
                 'password' =>'required',
             ]);
 
-            $verifytoken = $request->verifyToken;
+            $verifytoken = $request->token;
             $reset_pass = new User;
             $reset_pass->password  = Hash::make($request->password);
             $reset_user_pass = DB::table('users')->where('verifyToken',$verifytoken)
@@ -73,8 +73,9 @@ class UserController extends Controller
 
             if($reset_user_pass)
             {
-                session()->flash('success_reset',' Password Reset sucessfully');
-                return back();
+                /*session()->flash('success_reset',' Password Reset sucessfully');
+                return back();*/
+                return response()->json(['success'=>'sucessfully reset your password']);
             }
 
     }

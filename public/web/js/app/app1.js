@@ -130,6 +130,7 @@ require('./main');
         var count = container.find('.panel').length;
 
         count ++;
+        alert(count);
         var limit = $(window).width() > 768 ? 3 : 1;
         if (count >= limit) {
             container.find('#chat-000'+ limit).remove();

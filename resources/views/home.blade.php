@@ -11,12 +11,19 @@
               </div>
             </div>
          </div>
+<!-- 
+           <div v-for="post in posts_new">
+                  
+                 </div> -->
+
+
           <!--  <marquee direction="left"><img src="{{asset('images/animate.gif')}}"> </marquee> -->
  
     <!-- Upload Cover Picture Model  -->
          <div class="modal fade" id="cover_myModal" role="dialog">
               <div class="modal-dialog  modal-lg">
                 <!-- Modal content-->
+
                   <div class="modal-content" style="height: 75%">
                       <div class="modal-header user_model">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -55,6 +62,7 @@
 
    <div class="timeline row" data-toggle="isotope">      
               <div class="col-xs-12 col-md-6 col-lg-3 item">
+ <ul id="example-2">
                 <div class="timeline-block">
                   <div class="panel panel-default relative">
                     <img src="{{asset('web/images/place2-full.jpg')}}" alt="place" class="img-responsive">
@@ -118,105 +126,96 @@
              
          
 
-              <div class="col-xs-12 col-md-6 col-lg-6 item" style="margin-top: 2%;" >
+              <div class="col-xs-12 col-md-6 col-lg-6 item" style="margin-top: 2%;" >  
+   
                 <div class="timeline-block" v-for="post,key in posts">
-                   <vue-toast ref='toast'></vue-toast>
-                  <div class="panel panel-default">
-                    <div class="panel-heading">
-                      <div class="media">
-                        <div class="media-left">
-                          <a href="">
-                         <img :src="'{{url('../')}}/images/'+post.user.image"  class="media-object" style=" height: 50px; width: 68px;"> 
-                          </a>
-                        </div>
-                        <div class="media-body">
-                         <div  v-if="post.user_id == '{{Auth::user()->id}}'" style="cursor: pointer;">
-                           <span @click="deletepost(post.id)" class="pull-right">Delete</span>                           
-                         </div>
-                          <a href="">@{{post.user.firstname}}</a>
-                          <span>@{{post.created_at | myTime }}</span>
-                        </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                          <div class="media">
+                            <div class="media-left">
+                             <a href="">
+                             <img   :src="'{{url('../')}}/images/'+post.image"  class="media-object" style=" height: 50px; width: 68px;"> 
+                              </a>
+                            </div>
+                             <div class="media-body">
+                               <div  v-if="post.user_id == '{{Auth::user()->id}}'" style="cursor: pointer;">
+                                 <span @click="deletepost(post.id)" class="pull-right">Delete</span>                          
+                               </div>
+                                <a href="">@{{post.firstname}}</a>
+                                <span>@{{post.created_at | myTime }}</span>
+                            </div>
+                          </div>
                       </div>
-                    </div>
-                    <div class="panel-body text-muted">
-                      <i class="fa fa-map-marker"></i> Was in <a href="#">Brooklyn, New York</a>
-                    </div>
-                    <div class="relative height-300" style="height: 373px !important;">
-                      <div data-toggle="google-maps" class="maps-google-fs" data-center="40.776928,-73.910330" data-zoom="12" data-style="paper">
-                        <span>@{{post.content}}</span><br>
-                         <img v-if="post.postImage" :src="'{{url('../')}}/postImages/'+post.postImage" heigth="50px"  alt="" title="" class="img-thumbnail post_img">
-                      </div>
-                    </div>
-                    
+                       <div class="panel-body text-muted">
+                           <i class="fa fa-map-marker"></i> Was in <a href="#">Brooklyn, New York</a>
+                       </div>
+                        <div class="relative height-300" style="height: 373px !important;">
+                          <div data-toggle="google-maps" class="maps-google-fs" data-center="40.776928,-73.910330" data-zoom="12" data-style="paper">
+                            <span>@{{post.content}}</span>
+                            <br>
+                             <img v-if="post.postImage" :src="'{{url('../')}}/postImages/'+post.postImage" heigth="50px"  alt="" title="" class="img-thumbnail post_img">
+                          </div>
+                        </div>
+
                       <div class="view-all-comments">
                          <!-- Likes Section -->
-                            <span v-if="post.like.length!=0" @click="LikePost(post.id)" >
-                              <span v-if="post.user_id == '{{Auth::user()->id}}'" >
-                                <b style="cursor:pointer;color:#26a69a"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>Your Like</b>
-                                <b style="color: black"> @{{post.like.length}}</b></b>
+                             <span v-if="post.like.length!=0" @click="LikePost(post.id)" >
+                                <span v-if="post.user_id == '{{Auth::user()->id}}'" >
+                                  <b style="cursor:pointer;color:#26a69a"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i>Your Like</b>
+                                  <b style="color: black"> @{{post.likes}}</b></b>
+                                </span>
+                                <span v-else style="cursor: pointer;">
+                                     <b class="text-info">Likes </b> <b style="color: black"> @{{post.like.length}}</b></b>
+                                </span>
+                             </span>
+                              <span v-else  @click="LikePost(post.id)">
+                                   <b style="cursor:pointer;color:black"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Like</b>
                               </span>
-                          <span v-else style="cursor: pointer;">
-                               <b class="text-info">Likes </b> <b style="color: black"> @{{post.like.length}}</b></b>
-                            </span>
-                            </span>
-                            <span v-else  @click="LikePost(post.id)">
-                                 <b style="cursor:pointer;color:black"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> Like</b>
-                            </span>
-                         <!-- End Likes Section --> 
-
+                                 <!-- End Likes Section -->  
+                    
                         <a href="#">
                           <i class="fa fa-comments-o"></i> View all
                         </a>
-                        <a  @click="commentSeen=!commentSeen" class="pull-right" style="cursor: pointer;">@{{post.comment.length}} Comments</a>
-                      </div>
-                    <ul class="comments" id="myList">
-                      <li class="media"  v-for="comment in post.comment">
-                        <div class="media-left">
-                          <a href="">
-
-                              <img v-if="post.user.image" :src="'{{url('../')}}/images/'+post.user.image"   alt="" title="" style="width: 52px;height: 52px;">
-                          
-                          </a>
-                        </div>
-                        <div class="media-body">
-                          <div class="pull-right dropdown" data-show-hover="li">
-                            <span data-toggle="dropdown" class="toggle-button">
-                              <i class="fa fa-pencil"></i>
+                        <a  @click="commentSeen=!commentSeen" class="pull-right" style="cursor: pointer;"> Comments</a>
+                    </div>
+                       <ul class="comments" id="myList">
+                            <li class="media"  v-for="comment in post.comment">
+                              <div class="media-left">
+                                <a href="">
+                                    <img  :src="'{{url('../')}}/images/'+comment.image"   alt="" title="" style="width: 52px;height: 52px;">
+                                </a>
+                              </div>
+                              <div class="media-body">
+                             <div class="pull-right dropdown" data-show-hover="li">
+                           <span data-toggle="dropdown" class="toggle-button">
+                             <i class="fa fa-pencil"></i>
+                           </span>
+                           <ul class="dropdown-menu" role="menu" >
+                             <span  v-if="comment.user_id == '{{Auth::user()->id}}'">
+                                  <li><a href="#">Edit</a></li>
+                                  <li><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
+                             </span>
+                           </ul>
+                         </div>
+                               <div id="hide_div">
+                                   <a href="" class="comment-author pull-left">@{{comment.firstname}}</a><br>
+                                   <span>  @{{comment.comment}}</span>  
+                                   <div class="comment-date">@{{comment.created_at | myTime }}</div>
+                               </div> 
+                              </div>
+                            </li>
+                          <span class="btn btn-default" id="loadMore"> Load More....           
                             </span>
-                            <div>
-                                <span style="display:none"  >Show Comment</span>
-                            </div>
-                            <ul class="dropdown-menu" role="menu" >
-                              <span  v-if="comment.user_id == '{{Auth::user()->id}}'">
-                                   <li><a href="#">Edit</a></li>
-                                   <li><a href="#"  @click="deletecomment(comment.id)" >Delete</a></li>
-                              </span>
-                              <span v-else>
-                                 <li id="hide_comment"><span >Hide/Show</span></li>
-                              </span>
-                            </ul>
-                          </div>
-                          <div id="hide_div">
-                          <a href="" class="comment-author pull-left">@{{post.user.firstname}}</a><br>
-                          <span>@{{comment.comment}}</span>
-                          <div class="comment-date">@{{comment.created_at | myTime }}</div>
-                        </div>
-                        </div>
-                      </li>
-                      <span class="btn btn-default" id="loadMore"> Load More....           
-                      </span>
-                       <span style="display:none"   id="showLess" style="display: none">showLess</span>
-                   
-                     
-                      <p class="comment-form" >
-                          <div class="input-group" v-if="commentSeen">
-                              <span class="input-group-btn">
-                                 <button class="btn btn-success" @click="sendComment(post,key)">Send</button>  
-                              </span>
-                              <input type="text"  v-model="commentadd[key]"  class="form-control">
-                          </div>
-                      </p>
-                    </ul>
+                            <span style="display:none"   id="showLess" style="display: none">showLess</span>
+                            <p class="comment-form" >
+                              <div class="input-group" v-if="commentSeen">
+                                  <span class="input-group-btn">
+                                     <button class="btn btn-success" @click="sendComment(post,key)">Send</button>  
+                                  </span>
+                                  <input type="text"  v-model="commentadd[key]"  class="form-control">
+                              </div>
+                            </p>
+                      </ul>
                   </div>
                 </div>
               </div>

@@ -123,13 +123,14 @@ require('./main');
 
         var clone = $(html);
 
-        clone.attr("data-user-id", $(this).data("userId"));
+        clone.attr("data-user-id", $(this).data("<userI></userI>d"));
 
         container.find('.panel:not([id^="chat"])').remove();
 
         var count = container.find('.panel').length;
 
         count ++;
+        alert(count);
         var limit = $(window).width() > 768 ? 3 : 1;
         if (count >= limit) {
             container.find('#chat-000'+ limit).remove();

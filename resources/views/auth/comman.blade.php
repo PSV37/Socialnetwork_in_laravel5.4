@@ -100,12 +100,13 @@ WARNING: Respond.js doesn't work if you view the page via file:// -->
 </head>
 
 <body class="login">
-
+<div id="app">
   <div id="content">
     <div class="container-fluid">
          @yield('content') 
     </div>
   </div>
+</div>
 
   <!-- Footer -->
   <footer class="footer">

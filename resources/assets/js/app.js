@@ -32,6 +32,7 @@ const app = new Vue({
       about : '',
       content :'',
       posts : [],
+      posts_new : [],
       commentSeen :false,
       commentadd :{},
       comments : '',
@@ -40,23 +41,26 @@ const app = new Vue({
       conID :'',
       msgFrom :'',
       myfriends :[],
+      comments :[],
       friend_id :'',
       showModal: false,
+      rrr:'bala',
     },
 
 
 
     ready:function()
     {
-     this.created();
+    // this.created();
     },
 
   created(){
        axios.get('http://127.0.0.1:8000/posts/display')
             .then(response => {
-                console.log(response); //show if success
                 app.posts = response.data;
-                Vue.filter('myTime', function(value){
+                //console.log('successfully') + console.log(app.posts);
+               /// alert(response.data['0'].content);
+               Vue.filter('myTime', function(value){
                  return moment(value).fromNow();
                 });
             })
@@ -104,7 +108,7 @@ const app = new Vue({
 	            })
 
 	            .then((response) => {
-	                console.log("save Successfully"); //show if success
+	                //console.log("save Successfully"); //show if success
 	                this.image = '',
                   this.content = ''
 	                if(response.status===200)
@@ -129,10 +133,11 @@ const app = new Vue({
             content:this.content       
         })
            .then((response) => {
-                //console.log(response.data); //show if success
+                console.log(response.data); //show if success
                 this.content = '';
                 if(response.status===200)
-                {
+                {  
+                  console.log(response.data);
                     app.posts = response.data;
                     //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
                      
@@ -149,7 +154,7 @@ const app = new Vue({
         {
              axios.get('http://127.0.0.1:8000/deletepost/' + id)
             .then(response => {
-                console.log(response); //show if success
+               // console.log(response); //show if success
                 this.posts = response.data;
                  //toastr.success('Successfully User  Registred!', 'Success Alert', {timeOut: 5000});
             })
@@ -165,8 +170,8 @@ const app = new Vue({
        {
           axios.get('http://127.0.0.1:8000/LikePost/' + id)
             .then(response => {
-                console.log(response); //show if success
-                this.posts = response.data;
+              //  console.log(response); //show if success
+                app.posts = response.data;
             })
 
             .catch(function(response){
@@ -179,7 +184,7 @@ const app = new Vue({
        {
           axios.get('http://127.0.0.1:8000/DislikePost/' + id)
             .then(response => {
-                console.log(response); //show if success
+                //console.log(response); //show if success
                 this.posts = response.data;
             })
 
@@ -197,10 +202,11 @@ const app = new Vue({
           })
 
           .then(function(response){
-              console.log('save Successfully'); //show if success
+             // console.log('save Successfully'); //show if success
              this.commentadd = '';
               if(response.status===200)
               {
+               console.log(response.data);
                 app.posts = response.data;
               }
           })
@@ -216,7 +222,7 @@ const app = new Vue({
         {
           axios.get('http://127.0.0.1:8000/getmessages/' + id)
             .then(response => {
-                console.log(response.data); //show if success
+                //console.log(response.data); //show if success
                 app.privatemsgs = response.data;
                 app.conID = response.data[0].conversion_id;
             })
@@ -244,7 +250,7 @@ const app = new Vue({
                     msg : this.msgFrom
                 })
                 .then(function(response){
-                    console.log(response.data); //show if success
+                    //console.log(response.data); //show if success
                     if(response.status===200)
                     {
                         app.privatemsgs = response.data;
@@ -255,7 +261,7 @@ const app = new Vue({
         },
 /*************** Get all confirm friends for chating *************************/
      allmsg(){
-      axios.get('http://127.0.0.1:8000/newfriends',{
+      axios.get('http://127.0.0.1:8000/newfriendslist',{
       })
      .then(function(response){
               //console.log(response.data); //show if success
@@ -279,7 +285,7 @@ const app = new Vue({
                 msg: this.newMsgFrom,
               })
               .then(function (response) {
-                console.log(response.data); // show if success
+               // console.log(response.data); // show if success
                 if(response.status===200)
                 {
                     //alert(response.data);

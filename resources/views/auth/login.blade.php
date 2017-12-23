@@ -1,7 +1,7 @@
 @extends('auth.comman')
 
 @section('content')
-<div class="container"  id="app" >
+<div class="container">
     
   <div id="content">
    <section class="login_section" >
